@@ -107,6 +107,23 @@ class ElasticsearchHandler {
         return $results;
     }
 
+    public function raw($index, $query, $count = 1, $sort = "", $type = null) {
+        $params = [
+            "index" => $index,
+            "type" => $index,
+            "q" => $query,
+            "size" => $count,
+            "sort" => $sort,
+        ];
+
+        if($type != null)
+            $params['type'] = $type;
+
+        $results = $this->client->search($params);
+
+        return $results;
+    }
+
     public function count($index, $query, $type = null) {
         $params = [
             "index" => $index,
