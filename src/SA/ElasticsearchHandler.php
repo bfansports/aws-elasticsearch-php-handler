@@ -39,12 +39,12 @@ use Psr\Http\Message\ResponseInterface;
 class ElasticsearchHandler {
     private $client;
 
-    public function __construct() {
+    public function __construct($endpoints) {
         $psr7Handler = Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
         $credentialProvider = CredentialProvider::defaultProvider();
 
-        $handler = function(array $request) use($psr7Handler, $signer, $credentialProvider) {
+        $handler = function(array $request) use($psr7Handler, $signer, $credentialProvider, $endpoints) {
             // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
             $request['headers']['host'][0] = parse_url($request['headers']['host'][0], PHP_URL_HOST);
 
@@ -80,9 +80,7 @@ class ElasticsearchHandler {
 
         $this->client = ClientBuilder::create()
             ->setHandler($handler)
-            ->setHosts([
-                "https://search-esclust-esclus-k1g650pjv9tp-brzmmafmbdwd7mhnp7gbkr7lou.eu-west-1.es.amazonaws.com:443",
-            ])
+            ->setHosts($endpoints)
             ->build();
     }
 
