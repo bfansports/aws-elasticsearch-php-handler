@@ -4,7 +4,7 @@
 
 #### Installation
 
-Use composer to install. Simply add `"sportarchive/aws-sns-php-handler": "2.0"` to your composer requirements and update.
+Use composer to install. Simply add `"sportarchive/aws-elasticsearch-php-handler": "dev-master"` to your composer requirements and update.
 
 #### Instructions
 
