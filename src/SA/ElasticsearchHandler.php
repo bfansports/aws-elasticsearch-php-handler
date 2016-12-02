@@ -14,7 +14,7 @@ class ElasticsearchHandler {
     private $client;
 
     public function __construct($endpoints) {
-        $psr7Handler = Aws\default_http_handler();
+        $psr7Handler = \Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
         $credentialProvider = CredentialProvider::defaultProvider();
 
