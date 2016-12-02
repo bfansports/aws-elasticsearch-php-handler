@@ -1,0 +1,25 @@
+{
+    "authors": [
+        {
+            "email": "support@sportarchive.tv",
+            "name": "Sport Archive Inc"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "SA": "src/"
+        }
+    },
+    "description": "Small library to access Elasticsearch hosted by AWS.",
+    "keywords": [
+        "AWS",
+        "Elasticsearch"
+    ],
+    "name": "sportarchive/aws-elasticsearch-php-handler",
+    "require": {
+        "aws/aws-sdk-php": "3.*",
+        "elasticsearch/elasticsearch": "~2.3.0",
+        "php": ">=5.5"
+    },
+    "type": "library"
+}
