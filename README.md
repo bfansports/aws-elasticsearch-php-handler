@@ -11,7 +11,7 @@ Use composer to install. Simply add `"sportarchive/aws-sns-php-handler": "2.0"` 
 ##### Use basic lucene query syntax to query for results. You can also supply a max count and sort order in the query.
 
 ```
-$client = new ElasticsearchHandler();
+$client = new ElasticsearchHandler(["https://yourawselasticsearchendpoint.aws-region.es.amazonaws.com:443"]);
 
 $ESindex = "index_name";
 $EStype = "object_type";
@@ -43,7 +43,7 @@ The `$results` variable will now be an array containing the source objects for y
 ##### If you wish to simply get the count for the total number of results, there is also a count function.
 
 ```
-$client = new ElasticsearchHandler();
+$client = new ElasticsearchHandler(["https://yourawselasticsearchendpoint.aws-region.es.amazonaws.com:443"]);
 
 $ESindex = "index_name";
 $EStype = "object_type";
