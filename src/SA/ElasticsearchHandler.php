@@ -102,12 +102,12 @@ class ElasticsearchHandler {
         return $this->client->search($params)['hits']['total'];
     }
 
-    public function query($index, $query, $count = 1, $sort = "", $type = null) {
+    public function query($index, $query, $count = 1, $sort = "", $offset = 0, $type = null) {
         $sortarr = [];
         if($sort != "") {
             $temp = explode(",", $sort);
             foreach($temp as $t) {
-                $e = explode(":", $t, 2);
+                $e = explode(":", trim($t), 2);
                 $sortarr[$e[0]] = [
                     "order" => $e[1],
                 ];
@@ -117,6 +117,7 @@ class ElasticsearchHandler {
         $params = [
             "index" => $index,
             "type" => $index,
+            "from" => $offset,
             "q" => $query,
             "size" => $count,
             "sort" => $sortarr,
@@ -134,12 +135,12 @@ class ElasticsearchHandler {
         return $results;
     }
 
-    public function raw($index, $query, $count = 1, $sort = "", $type = null) {
+    public function raw($index, $query, $count = 1, $sort = "", $offset = 0, $type = null) {
         $sortarr = [];
         if($sort != "") {
             $temp = explode(",", $sort);
             foreach($temp as $t) {
-                $e = explode(":", $t, 2);
+                $e = explode(":", trim($t), 2);
                 $sortarr[$e[0]] = [
                     "order" => $e[1],
                 ];
@@ -149,6 +150,7 @@ class ElasticsearchHandler {
         $params = [
             "index" => $index,
             "type" => $index,
+            "from" => $offset,
             "q" => $query,
             "size" => $count,
             "sort" => $sortarr,
