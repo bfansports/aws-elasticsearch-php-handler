@@ -58,13 +58,68 @@ class ElasticsearchHandler {
             ->build();
     }
 
+    public function aggregate($index, $query, $data, $type = null) {
+        $params = [
+            "index" => $index,
+            "type" => $index,
+            "q" => $query,
+            "size" => 0,
+            "search_type" => "count",
+        ];
+
+        if($type != null)
+            $params['type'] = $type;
+
+        $body = [];
+        foreach($data as $k => $v) {
+            $name = $k;
+            $type = $v['type'];
+            $field = $v['field'];
+            $body[$name] = [
+                $type => [
+                    "field" => $field,
+                ],
+            ];
+        }
+
+        $params['body'] = ["aggs" => $body];
+
+        return $this->client->search($params)['aggregations'];
+    }
+
+    public function count($index, $query, $type = null) {
+        $params = [
+            "index" => $index,
+            "type" => $index,
+            "q" => $query,
+            "size" => 0,
+            "search_type" => "count",
+        ];
+
+        if($type != null)
+            $params['type'] = $type;
+
+        return $this->client->search($params)['hits']['total'];
+    }
+
     public function query($index, $query, $count = 1, $sort = "", $type = null) {
+        $sortarr = [];
+        if($sort != "") {
+            $temp = explode(",", $sort);
+            foreach($temp as $t) {
+                $e = explode(":", $t, 2);
+                $sortarr[$e[0]] = [
+                    "order" => $e[1],
+                ];
+            }
+        }
+
         $params = [
             "index" => $index,
             "type" => $index,
             "q" => $query,
             "size" => $count,
-            "sort" => $sort,
+            "sort" => $sortarr,
         ];
 
         if($type != null)
@@ -80,12 +135,23 @@ class ElasticsearchHandler {
     }
 
     public function raw($index, $query, $count = 1, $sort = "", $type = null) {
+        $sortarr = [];
+        if($sort != "") {
+            $temp = explode(",", $sort);
+            foreach($temp as $t) {
+                $e = explode(":", $t, 2);
+                $sortarr[$e[0]] = [
+                    "order" => $e[1],
+                ];
+            }
+        }
+
         $params = [
             "index" => $index,
             "type" => $index,
             "q" => $query,
             "size" => $count,
-            "sort" => $sort,
+            "sort" => $sortarr,
         ];
 
         if($type != null)
@@ -94,19 +160,5 @@ class ElasticsearchHandler {
         $results = $this->client->search($params);
 
         return $results;
-    }
-
-    public function count($index, $query, $type = null) {
-        $params = [
-            "index" => $index,
-            "type" => $index,
-            "q" => $query,
-            "search_type" => "count",
-        ];
-
-        if($type != null)
-            $params['type'] = $type;
-
-        return $this->client->search($params)['hits']['total'];
     }
 }
