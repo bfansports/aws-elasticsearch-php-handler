@@ -104,13 +104,14 @@ class ElasticsearchHandler {
 
     public function query($index, $query, $count = 1, $sort = "", $type = null) {
         $sortarr = [];
-        $temp = explode(",", $sort);
-
-        foreach($temp as $t) {
-            $e = explode(":", $t, 2);
-            $sortarr[$e[0]] = [
-                "order" => $e[1],
-            ];
+        if($sort != "") {
+            $temp = explode(",", $sort);
+            foreach($temp as $t) {
+                $e = explode(":", $t, 2);
+                $sortarr[$e[0]] = [
+                    "order" => $e[1],
+                ];
+            }
         }
 
         $params = [
@@ -135,13 +136,14 @@ class ElasticsearchHandler {
 
     public function raw($index, $query, $count = 1, $sort = "", $type = null) {
         $sortarr = [];
-        $temp = explode(",", $sort);
-
-        foreach($temp as $t) {
-            $e = explode(":", $t, 2);
-            $sortarr[$e[0]] = [
-                "order" => $e[1],
-            ];
+        if($sort != "") {
+            $temp = explode(",", $sort);
+            foreach($temp as $t) {
+                $e = explode(":", $t, 2);
+                $sortarr[$e[0]] = [
+                    "order" => $e[1],
+                ];
+            }
         }
 
         $params = [
