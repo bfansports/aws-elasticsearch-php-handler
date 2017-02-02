@@ -144,6 +144,14 @@ class ElasticsearchHandler {
         return $this->client->indices()->delete($params);
     }
 
+    public function indexExists($index) {
+        $params = [
+            "index" => $index,
+        ];
+
+        return $this->client->indices()->exists($params);
+    }
+
     public function indices() {
         return $this->client->indices()->stats();
     }
