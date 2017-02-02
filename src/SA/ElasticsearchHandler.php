@@ -108,6 +108,46 @@ class ElasticsearchHandler {
         return $this->client->search($params)['hits']['total'];
     }
 
+    public function createDocument($index, $data) {
+        $params = [
+            "index" => $index,
+            "type" => $index,
+            "body" => $data,
+        ];
+
+        return $this->client->index($params);
+    }
+
+    public function createIndex($index) {
+        $params = [
+            "index" => $index,
+        ];
+
+        return $this->client->indices()->create($params);
+    }
+
+    public function deleteDocument($index, $id) {
+        $params = [
+            "index" => $index,
+            "type" => $index,
+            "id" => $id,
+        ];
+
+        return $this->client->delete($params);
+    }
+
+    public function deleteIndex($index) {
+        $params = [
+            "index" => $index,
+        ];
+
+        return $this->client->indices()->delete($params);
+    }
+
+    public function indices() {
+        return $this->client->indices()->stats();
+    }
+
     public function query($index, $query, $count = 1, $sort = "", $offset = 0, $type = null) {
         $sortarr = [];
         if($sort != "") {
