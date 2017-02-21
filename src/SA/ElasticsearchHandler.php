@@ -61,6 +61,7 @@ class ElasticsearchHandler {
         $this->client = ClientBuilder::create()
             ->setHandler($handler)
             ->setHosts($endpoints)
+            ->allowBadJSONSerialization()
             ->build();
     }
 
@@ -160,24 +161,13 @@ class ElasticsearchHandler {
     }
 
     public function query($index, $query, $count = 1, $sort = "", $offset = 0, $type = null) {
-        $sortarr = [];
-        if($sort != "") {
-            $temp = explode(",", $sort);
-            foreach($temp as $t) {
-                $e = explode(":", trim($t), 2);
-                $sortarr[$e[0]] = [
-                    "order" => $e[1],
-                ];
-            }
-        }
-
         $params = [
             "index" => $index,
             "type" => $index,
             "from" => $offset,
             "q" => $query,
             "size" => $count,
-            "sort" => $sortarr,
+            "sort" => $sort,
         ];
 
         if($type != null)
@@ -193,24 +183,13 @@ class ElasticsearchHandler {
     }
 
     public function raw($index, $query, $count = 1, $sort = "", $offset = 0, $type = null) {
-        $sortarr = [];
-        if($sort != "") {
-            $temp = explode(",", $sort);
-            foreach($temp as $t) {
-                $e = explode(":", trim($t), 2);
-                $sortarr[$e[0]] = [
-                    "order" => $e[1],
-                ];
-            }
-        }
-
         $params = [
             "index" => $index,
             "type" => $index,
             "from" => $offset,
             "q" => $query,
             "size" => $count,
-            "sort" => $sortarr,
+            "sort" => $sort,
         ];
 
         if($type != null)
