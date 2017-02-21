@@ -70,8 +70,6 @@ class ElasticsearchHandler {
             "index" => $index,
             "type" => $index,
             "q" => $query,
-            "size" => 0,
-            "search_type" => "count",
         ];
 
         if($type != null)
@@ -99,14 +97,12 @@ class ElasticsearchHandler {
             "index" => $index,
             "type" => $index,
             "q" => $query,
-            "size" => 0,
-            "search_type" => "count",
         ];
 
         if($type != null)
             $params['type'] = $type;
 
-        return $this->client->search($params)['hits']['total'];
+        return $this->client->count($params)['count'];
     }
 
     public function createDocument($index, $data, $id = null) {
