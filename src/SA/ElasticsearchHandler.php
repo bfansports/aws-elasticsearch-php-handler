@@ -160,20 +160,8 @@ class ElasticsearchHandler {
         return $this->client->indices()->stats();
     }
 
-    public function query($index, $query, $count = 1, $sort = "", $offset = 0, $type = null) {
-        $params = [
-            "index" => $index,
-            "type" => $index,
-            "from" => $offset,
-            "q" => $query,
-            "size" => $count,
-            "sort" => $sort,
-        ];
-
-        if($type != null)
-            $params['type'] = $type;
-
-        $results = $this->client->search($params);
+    public function query($index, $query, $count = 1, $sort = null, $offset = 0, $type = null) {
+        $results = $this->raw($index, $query, $count, $sort, $offset, $type);
 
         $results = array_map(function($item) {
             return $item['_source'];
@@ -182,18 +170,20 @@ class ElasticsearchHandler {
         return $results;
     }
 
-    public function raw($index, $query, $count = 1, $sort = "", $offset = 0, $type = null) {
+    public function raw($index, $query, $count = 1, $sort = null, $offset = 0, $type = null) {
         $params = [
             "index" => $index,
             "type" => $index,
             "from" => $offset,
             "q" => $query,
             "size" => $count,
-            "sort" => $sort,
         ];
 
         if($type != null)
             $params['type'] = $type;
+
+        if($sort != null && $sort != "")
+            $params['sort'] = $sort;
 
         $results = $this->client->search($params);
 
