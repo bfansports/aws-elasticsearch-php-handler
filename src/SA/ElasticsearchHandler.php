@@ -108,12 +108,15 @@ class ElasticsearchHandler {
         return $this->client->search($params)['hits']['total'];
     }
 
-    public function createDocument($index, $data) {
+    public function createDocument($index, $data, $id = null) {
         $params = [
             "index" => $index,
             "type" => $index,
             "body" => $data,
         ];
+
+        if($id != null)
+            $params['id'] = $id;
 
         return $this->client->index($params);
     }
