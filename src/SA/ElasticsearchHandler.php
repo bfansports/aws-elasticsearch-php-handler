@@ -185,4 +185,36 @@ class ElasticsearchHandler {
 
         return $results;
     }
+
+    public function scan($index, $query, $type = null) {
+        $params = [
+            "body" => [
+                "sort" => [
+                    ["_uid" => "asc"],
+                ],
+            ],
+            "index" => $index,
+            "q" => $query,
+            "size" => 10000,
+            "type" => $index,
+        ];
+
+        if($type != null)
+            $params['type'] = $type;
+
+        $results = [];
+        $total = 0;
+        do {
+            $temp = $this->client->search($params);
+            $total = $temp['hits']['total'];
+            $hits = $temp['hits']['hits'];
+            $last = end($hits);
+
+            $results = array_merge($results, $hits);
+
+            $params['body']['search_after'] = $last['sort'];
+        } while(count($results) < $total);
+
+        return $results;
+    }
 }
