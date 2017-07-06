@@ -1,8 +1,8 @@
 {
     "authors": [
         {
-            "email": "support@sportarchive.tv",
-            "name": "Sport Archive Inc"
+            "email": "support@bfansports.com",
+            "name": "bFAN Sports"
         }
     ],
     "autoload": {
@@ -15,7 +15,7 @@
         "AWS",
         "Elasticsearch"
     ],
-    "name": "sportarchive/aws-elasticsearch-php-handler",
+    "name": "bfansports/aws-elasticsearch-php-handler",
     "require": {
         "aws/aws-sdk-php": "3.*",
         "elasticsearch/elasticsearch": "~5.0",
