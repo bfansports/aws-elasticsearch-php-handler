@@ -20,14 +20,14 @@ class ElasticsearchHandler {
 
         $handler = function(array $request) use($psr7Handler, $signer, $credentialProvider, $endpoints) {
             // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
-            $request['headers']['host'][0] = parse_url($request['headers']['host'][0], PHP_URL_HOST);
+            $request['headers']['Host'][0] = parse_url($request['headers']['Host'][0], PHP_URL_HOST);
 
             // Create a PSR-7 request from the array passed to the handler
             $psr7Request = new Request(
                 $request['http_method'],
                 (new Uri($request['uri']))
                     ->withScheme($request['scheme'])
-                    ->withHost($request['headers']['host'][0]),
+                    ->withHost($request['headers']['Host'][0]),
                 $request['headers'],
                 $request['body']
             );
