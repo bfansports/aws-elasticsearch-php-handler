@@ -11,14 +11,15 @@ use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use Psr\Http\Message\ResponseInterface;
 
 class ElasticsearchHandler {
+
+    private $cacheKey = 'AWS_CREDENTIALS_CACHE';
     private $client;
 
-    public function __construct($endpoints) {
+    public function __construct($endpoints, $memcached = null) {
         $psr7Handler = \Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
-        $credentialProvider = CredentialProvider::defaultProvider();
 
-        $handler = function(array $request) use($psr7Handler, $signer, $credentialProvider, $endpoints) {
+        $handler = function(array $request) use($psr7Handler, $signer, $memcached, $endpoints) {
             // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
             $request['headers']['Host'][0] = parse_url($request['headers']['Host'][0], PHP_URL_HOST);
 
@@ -31,11 +32,23 @@ class ElasticsearchHandler {
                 $request['headers'],
                 $request['body']
             );
+            if ( $memcached instanceof \Memcached ) {
+                $credentials = $memcached->get($this->getCacheKey());
+                if ( !$credentials || $credentials->isExpired() ) {
+                    $credentialProvider = CredentialProvider::defaultProvider();
+                    $credentials = $credentialProvider()->wait();
+                    $memcached->set($this->getCacheKey(), $credentials);
+                }
+            }
+            else{
+                $credentialProvider = CredentialProvider::defaultProvider();
+                $credentials = $credentialProvider()->wait();
+            }
 
             // Sign the PSR-7 request with credentials from the environment
             $signedRequest = $signer->signRequest(
                 $psr7Request,
-                call_user_func($credentialProvider)->wait()
+                $credentials
             );
 
             // Send the signed request to Amazon ES
@@ -216,5 +229,12 @@ class ElasticsearchHandler {
         } while(count($results) < $total);
 
         return $results;
+    }
+
+    public function getCacheKey(){
+        return $this->cacheKey;
+    }
+    public function setCacheKey($cacheKey){
+        $this->cacheKey = $cacheKey;
     }
 }
