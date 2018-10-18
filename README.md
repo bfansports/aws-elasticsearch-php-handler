@@ -52,3 +52,20 @@ $query = "key:value AND foo:bar";
 $results = $client->raw($ESindex, $query, $EStype);
 ```
 This function acts the same way as `raw` and `query`, but instead uses Elasticsearch's `search_type:count` so it does not actually retrieve or return the data.
+
+##### You can provide a memcached instance to cache credentials
+
+```
+$memcachedInstance = new \Memcached();
+$memcachedInstance->addServer('localhost', 11211);
+$client = new ElasticsearchHandler(
+	["https://yourawselasticsearchendpoint.aws-region.es.amazonaws.com:443"], 
+	$memcachedInstance
+);
+
+$ESindex = "index_name";
+$EStype = "object_type";
+$query = "key:value AND foo:bar";
+
+$results = $client->raw($ESindex, $query, $EStype);
+```
