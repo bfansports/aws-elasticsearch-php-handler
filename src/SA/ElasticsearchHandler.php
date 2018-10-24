@@ -231,9 +231,14 @@ class ElasticsearchHandler {
         return $results;
     }
 
+    public function search($params = []) {
+        return $this->client->search($params);
+    }
+
     public function getCacheKey(){
         return $this->cacheKey;
     }
+    
     public function setCacheKey($cacheKey){
         $this->cacheKey = $cacheKey;
     }
