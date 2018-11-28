@@ -242,4 +242,40 @@ class ElasticsearchHandler {
     public function setCacheKey($cacheKey){
         $this->cacheKey = $cacheKey;
     }
+
+    public function getIndexParameters($params)
+    {
+        return $this->client->indices()->getSettings($params);
+    }
+
+    public function putIndexParameters($params)
+    {
+        return $this->client->indices()->putSettings($params);
+    }
+
+    public function getIndexMapping($params)
+    {
+        return $this->client->indices()->getMapping($params);
+    }
+
+    public function putIndexMapping($params)
+    {
+        return $this->client->indices()->putMapping($params);
+    }
+
+    public function updateIndexAliases($params)
+    {
+        return $this->client->indices()->updateAliases($params);
+    }
+
+    public function getIndexAliases()
+    {
+        return $this->client->indices()->getAliases();
+    }
+
+    public function reindex($params)
+    {
+        return $this->client->reindex($params);
+    }
+
 }
