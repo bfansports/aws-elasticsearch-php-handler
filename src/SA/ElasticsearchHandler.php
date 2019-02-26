@@ -13,6 +13,8 @@ use Psr\Http\Message\ResponseInterface;
 class ElasticsearchHandler {
 
     private $cacheKey = 'AWS_CREDENTIALS_CACHE';
+    private $retriesCount = 5;
+    private $timeout = 10;
     private $client;
 
     public function __construct($endpoints, $memcached = null) {
@@ -35,13 +37,17 @@ class ElasticsearchHandler {
             if ( $memcached instanceof \Memcached ) {
                 $credentials = $memcached->get($this->getCacheKey());
                 if ( !$credentials || $credentials->isExpired() ) {
-                    $credentialProvider = CredentialProvider::defaultProvider();
+                    $credentialProvider = CredentialProvider::defaultProvider([
+                        'timeout' => $this->timeout
+                    ]);
                     $credentials = $credentialProvider()->wait();
                     $memcached->set($this->getCacheKey(), $credentials);
                 }
             }
             else{
-                $credentialProvider = CredentialProvider::defaultProvider();
+                $credentialProvider = CredentialProvider::defaultProvider([
+                    'timeout' => $this->timeout
+                ]);
                 $credentials = $credentialProvider()->wait();
             }
 
@@ -72,6 +78,7 @@ class ElasticsearchHandler {
         };
 
         $this->client = ClientBuilder::create()
+            ->setRetries($this->retriesCount)
             ->setHandler($handler)
             ->setHosts($endpoints)
             ->allowBadJSONSerialization()
@@ -276,6 +283,22 @@ class ElasticsearchHandler {
     public function reindex($params)
     {
         return $this->client->reindex($params);
+    }
+
+    public function getRetriesCount() {
+        return $this->retriesCount;
+    }
+
+    public function setRetriesCount($retriesCount){
+        $this->retriesCount = $retriesCount;
+    }
+
+    public function getTimeout() {
+        return $this->timeout;
+    }
+
+    public function setTimeout($timeout){
+        $this->timeout = $timeout;
     }
 
 }
