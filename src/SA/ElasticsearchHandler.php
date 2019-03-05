@@ -12,16 +12,15 @@ use Psr\Http\Message\ResponseInterface;
 
 class ElasticsearchHandler {
 
-    private $cacheKey = 'AWS_CREDENTIALS_CACHE';
     private $retriesCount = 5;
     private $timeout = 10;
     private $client;
 
-    public function __construct($endpoints, $memcached = null) {
+    public function __construct($endpoints) {
         $psr7Handler = \Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
 
-        $handler = function(array $request) use($psr7Handler, $signer, $memcached, $endpoints) {
+        $handler = function(array $request) use($psr7Handler, $signer, $endpoints) {
             // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
             $request['headers']['Host'][0] = parse_url($request['headers']['Host'][0], PHP_URL_HOST);
 
@@ -34,22 +33,11 @@ class ElasticsearchHandler {
                 $request['headers'],
                 $request['body']
             );
-            if ( $memcached instanceof \Memcached ) {
-                $credentials = $memcached->get($this->getCacheKey());
-                if ( !$credentials || $credentials->isExpired() ) {
-                    $credentialProvider = CredentialProvider::defaultProvider([
-                        'timeout' => $this->timeout
-                    ]);
-                    $credentials = $credentialProvider()->wait();
-                    $memcached->set($this->getCacheKey(), $credentials);
-                }
-            }
-            else{
-                $credentialProvider = CredentialProvider::defaultProvider([
-                    'timeout' => $this->timeout
-                ]);
-                $credentials = $credentialProvider()->wait();
-            }
+
+            $credentialProvider = CredentialProvider::defaultProvider([
+                'timeout' => $this->timeout
+            ]);
+            $credentials = $credentialProvider()->wait();
 
             // Sign the PSR-7 request with credentials from the environment
             $signedRequest = $signer->signRequest(
@@ -245,7 +233,7 @@ class ElasticsearchHandler {
     public function getCacheKey(){
         return $this->cacheKey;
     }
-    
+
     public function setCacheKey($cacheKey){
         $this->cacheKey = $cacheKey;
     }
