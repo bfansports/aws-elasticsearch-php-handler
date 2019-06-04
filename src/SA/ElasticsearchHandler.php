@@ -83,7 +83,13 @@ class ElasticsearchHandler {
         $params = [
             "index" => $index,
             "type" => $index,
-            "q" => $query,
+            "body" => [
+                "query" => [
+                    "query_string" => [
+                        "query" => $query,
+                    ],
+                ],
+            ],
         ];
 
         if ($type != null) {
@@ -111,7 +117,13 @@ class ElasticsearchHandler {
         $params = [
             "index" => $index,
             "type" => $index,
-            "q" => $query,
+            "body" => [
+                "query" => [
+                    "query_string" => [
+                        "query" => $query,
+                    ],
+                ],
+            ],
         ];
 
         if ($type != null) {
@@ -202,7 +214,13 @@ class ElasticsearchHandler {
             "index" => $index,
             "type" => $index,
             "from" => $offset,
-            "q" => $query,
+            "body" => [
+                "query" => [
+                    "query_string" => [
+                        "query" => $query,
+                    ],
+                ],
+            ],
             "size" => $count,
         ];
 
@@ -223,9 +241,13 @@ class ElasticsearchHandler {
         $params = [
             "body" => [
                 "sort" => [["_uid" => "asc"]],
+                "query" => [
+                    "query_string" => [
+                        "query" => $query,
+                    ],
+                ],
             ],
             "index" => $index,
-            "q" => $query,
             "size" => 10000,
             "type" => $index,
         ];
