@@ -108,7 +108,7 @@ class ElasticsearchHandler {
             ];
         }
 
-        $params['body'] = ["aggs" => $body];
+        $params['body']['aggs'] = $body;
 
         return $this->client->search($params)['aggregations'];
     }
