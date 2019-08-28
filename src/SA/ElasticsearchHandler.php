@@ -19,9 +19,15 @@ class ElasticsearchHandler {
         $psr7Handler = \Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
 
+        $credentialProvider = CredentialProvider::defaultProvider([
+            'timeout' => $this->timeout,
+        ]);
+        $credentials = $credentialProvider()->wait();
+
         $handler = function (array $request) use (
             $psr7Handler,
             $signer,
+            $credentials,
             $endpoints
         ) {
             // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
@@ -39,11 +45,6 @@ class ElasticsearchHandler {
                 $request['headers'],
                 $request['body']
             );
-
-            $credentialProvider = CredentialProvider::defaultProvider([
-                'timeout' => $this->timeout,
-            ]);
-            $credentials = $credentialProvider()->wait();
 
             // Sign the PSR-7 request with credentials from the environment
             $signedRequest = $signer->signRequest($psr7Request, $credentials);
