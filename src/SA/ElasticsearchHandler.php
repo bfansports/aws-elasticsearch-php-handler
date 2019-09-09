@@ -22,12 +22,11 @@ class ElasticsearchHandler {
         $credentialProvider = CredentialProvider::defaultProvider([
             'timeout' => $this->timeout,
         ]);
-        $credentials = $credentialProvider()->wait();
 
         $handler = function (array $request) use (
             $psr7Handler,
             $signer,
-            $credentials,
+            $credentialProvider,
             $endpoints
         ) {
             // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
@@ -47,6 +46,7 @@ class ElasticsearchHandler {
             );
 
             // Sign the PSR-7 request with credentials from the environment
+            $credentials = $credentialProvider()->wait();
             $signedRequest = $signer->signRequest($psr7Request, $credentials);
 
             // Send the signed request to Amazon ES
