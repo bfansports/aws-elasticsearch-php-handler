@@ -328,4 +328,12 @@ class ElasticsearchHandler {
     public function setTimeout($timeout) {
         $this->timeout = $timeout;
     }
+
+    public function putIndexSettings($params) {
+        return $this->client->indices()->putSettings($params);
+    }
+
+    public function getIndexSettings($params) {
+        return $this->client->indices()->getSettings($params);
+    }
 }
