@@ -267,7 +267,12 @@ class ElasticsearchHandler {
 
             $results = array_merge($results, $hits);
 
-            $params['body']['search_after'] = $last['sort'];
+            if ( $last ) {
+                $params['body']['search_after'] = $last['sort'];
+            }
+            else {
+                $params['body']['search_after'] = null;
+            }
         } while (count($results) < $total);
 
         return $results;
