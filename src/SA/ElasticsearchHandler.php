@@ -12,13 +12,16 @@ use Psr\Http\Message\ResponseInterface;
 
 class ElasticsearchHandler {
     private $retriesCount = 5;
+    private $timeout = 10;
     private $client;
 
     public function __construct($endpoints) {
         $psr7Handler = \Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
 
-        $credentialProvider = CredentialProvider::defaultProvider();
+        $credentialProvider = CredentialProvider::defaultProvider([
+            'timeout' => $this->timeout,
+        ]);
 
         $handler = function (array $request) use (
             $psr7Handler,
