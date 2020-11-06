@@ -134,12 +134,16 @@ class ElasticsearchHandler {
         return $this->client->count($params)['count'];
     }
 
-    public function createDocument($index, $data, $id = null) {
+    public function createDocument($index, $data, $id = null, $type = null) {
         $params = [
             "index" => $index,
             "type" => $index,
             "body" => $data,
         ];
+
+        if ($type != null) {
+            $params['type'] = $type;
+        }
 
         if ($id != null) {
             $params['id'] = $id;
