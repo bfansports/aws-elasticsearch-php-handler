@@ -19,9 +19,14 @@ class ElasticsearchHandler {
         $psr7Handler = \Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
 
-        $credentialProvider = CredentialProvider::defaultProvider([
-            'timeout' => $this->timeout,
-        ]);
+        if ( !empty($_SERVER['AWS_PROFILE']) ) {
+            $credentialProvider = CredentialProvider::sso('profile ' . $_SERVER['AWS_PROFILE']);
+        }
+        else {
+            $credentialProvider = CredentialProvider::defaultProvider([
+                'timeout' => $this->timeout,
+            ]);
+        }
 
         $handler = function (array $request) use (
             $psr7Handler,
