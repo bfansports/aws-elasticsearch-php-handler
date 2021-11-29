@@ -81,7 +81,6 @@ class ElasticsearchHandler {
             ->setRetries($this->retriesCount)
             ->setHandler($handler)
             ->setHosts($endpoints)
-            ->allowBadJSONSerialization()
             ->build();
     }
 
