@@ -15,8 +15,13 @@ class ElasticsearchHandler {
     private $client;
 
     public function __construct($endpoints) {
+
+        error_log('ici 1');
+
         $psr7Handler = \Aws\default_http_handler();
         $signer = new SignatureV4("es", $_SERVER['AWS_DEFAULT_REGION']);
+
+        error_log('ici 2');
 
         if ( !empty($_SERVER['AWS_PROFILE']) ) {
             $credentialProvider = CredentialProvider::sso('profile ' . $_SERVER['AWS_PROFILE']);
@@ -27,17 +32,25 @@ class ElasticsearchHandler {
             ]);
         }
 
+        error_log('ici 3');
+
         $handler = function (array $request) use (
             $psr7Handler,
             $signer,
             $credentialProvider,
             $endpoints
         ) {
+
+
+            error_log('ici 6');
+
             // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
             $request['headers']['Host'][0] = parse_url(
                 $request['headers']['Host'][0],
                 PHP_URL_HOST
             );
+
+            error_log('ici 7');
 
             // Create a PSR-7 request from the array passed to the handler
             $psr7Request = new Request(
@@ -49,15 +62,24 @@ class ElasticsearchHandler {
                 $request['body']
             );
 
+            error_log('ici 8');
+
             // Sign the PSR-7 request with credentials from the environment
             $credentials = $credentialProvider()->wait();
+
+            error_log('ici 9');
             $signedRequest = $signer->signRequest($psr7Request, $credentials);
+            error_log('ici 10');
+
+
 
             // Send the signed request to Amazon ES
             /** @var ResponseInterface $response */
             $response = $psr7Handler($signedRequest)
                 ->then(
                     function (\Psr\Http\Message\ResponseInterface $r) {
+
+                        error_log('ici 12');
                         return $r;
                     },
                     function ($error) {
@@ -66,6 +88,7 @@ class ElasticsearchHandler {
                 )
                 ->wait();
 
+            error_log('ici 11');
             // Convert the PSR-7 response to a RingPHP response
             return new CompletedFutureArray([
                 "status" => $response->getStatusCode(),
@@ -76,10 +99,15 @@ class ElasticsearchHandler {
             ]);
         };
 
+
+        error_log('ici 3');
+
         $this->client = ClientBuilder::create()
             ->setHandler($handler)
             ->setHosts($endpoints)
             ->build();
+
+        error_log('ici 4');
     }
 
     public function aggregate($index, $query, $data, $type = null) {
