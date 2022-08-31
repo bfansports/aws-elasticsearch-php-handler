@@ -137,9 +137,10 @@ class ElasticsearchHandler {
     }
 
     public function createDocument($index, $data, $id = null, $type = null) {
+        $ex_index = explode("_", $index);
         $params = [
             "index" => $index,
-            "type" => $index,
+            "type" => $ex_index[0],
             "body" => $data,
         ];
 
