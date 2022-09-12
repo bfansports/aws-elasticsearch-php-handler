@@ -11,7 +11,6 @@ use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use Psr\Http\Message\ResponseInterface;
 
 class ElasticsearchHandler {
-    private $retriesCount = 5;
     private $timeout = 10;
     private $client;
 
@@ -78,10 +77,8 @@ class ElasticsearchHandler {
         };
 
         $this->client = ClientBuilder::create()
-            ->setRetries($this->retriesCount)
             ->setHandler($handler)
             ->setHosts($endpoints)
-            ->allowBadJSONSerialization()
             ->build();
     }
 
@@ -140,9 +137,10 @@ class ElasticsearchHandler {
     }
 
     public function createDocument($index, $data, $id = null, $type = null) {
+        $ex_index = explode("_", $index);
         $params = [
             "index" => $index,
-            "type" => $index,
+            "type" => $ex_index[0],
             "body" => $data,
         ];
 
@@ -328,11 +326,11 @@ class ElasticsearchHandler {
     }
 
     public function getRetriesCount() {
-        return $this->retriesCount;
+        //deprecated - we dont remove the function for the moment to not break existing script
     }
 
     public function setRetriesCount($retriesCount) {
-        $this->retriesCount = $retriesCount;
+        //deprecated - we dont remove the function for the moment to not break existing script
     }
 
     public function getTimeout() {
