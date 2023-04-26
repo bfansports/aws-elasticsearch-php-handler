@@ -85,7 +85,6 @@ class ElasticsearchHandler {
     public function aggregate($index, $query, $data, $type = null) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "body" => [
                 "query" => [
                     "query_string" => [
@@ -119,7 +118,6 @@ class ElasticsearchHandler {
     public function count($index, $query, $type = null) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "body" => [
                 "query" => [
                     "query_string" => [
@@ -166,7 +164,6 @@ class ElasticsearchHandler {
     public function deleteDocument($index, $id) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "id" => $id,
         ];
 
@@ -220,7 +217,6 @@ class ElasticsearchHandler {
     ) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "from" => $offset,
             "body" => [
                 "query" => [
@@ -257,7 +253,6 @@ class ElasticsearchHandler {
             ],
             "index" => $index,
             "size" => 10000,
-            "type" => $index,
         ];
 
         if ($type != null) {
